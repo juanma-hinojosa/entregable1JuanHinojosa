@@ -1,4 +1,4 @@
-// Array de objetos de destinos turisticos disponibles
+// ------ Datos base ------
 const destinosTuristicos = [
   { id: 1, pais: "Brasil", ciudad: "San Pablo" },
   { id: 2, pais: "Estados Unidos", ciudad: "Miami" },
@@ -8,76 +8,90 @@ const destinosTuristicos = [
   { id: 6, pais: "Brasil", ciudad: "Maceio" },
 ];
 
+// ------ Elementos del DOM ------
+const inputNombre = document.getElementById("inputNombre");
+const btnGuardarNombre = document.getElementById("btnGuardarNombre");
+const saludo = document.getElementById("saludo");
 
-// Esta funcion se encarga de obtener el nombre y apellido del pasajero
-// El valor de nombre se retorna para ser utilizado en otra funcion
-function nombreDePasajero() {
-  let nombre = prompt("Por favor introduce tu nombre y apellido: ");
-  
-  while (nombre === "" || nombre === null) {
-    nombre = prompt("Por favor introduce tu nombre y apellido CORRECTAMENTE: ");
+const listaDestinos = document.getElementById("listaDestinos");
+const inputDias = document.getElementById("inputDias");
+const btnConfirmarViaje = document.getElementById("btnConfirmarViaje");
+
+const resumen = document.getElementById("resumen");
+
+let nombrePasajero = "";
+let destinoSeleccionado = null;
+
+// ------ 1. Guardar nombre ------
+btnGuardarNombre.addEventListener("click", () => {
+  const nombre = inputNombre.value.trim();
+
+  if (nombre === "") {
+    saludo.innerHTML = "⚠️ Por favor ingresa tu nombre.";
+    return;
   }
 
-  alert(`Hola ${nombre}. Bienvenido a Flybondi`);
-  return nombre;
+  nombrePasajero = nombre;
+  localStorage.setItem("nombrePasajero", nombre);
+
+  saludo.innerHTML = `Hola <strong>${nombre}</strong>, bienvenido a Flybondi.`;
+});
+
+// ------ 2. Mostrar destinos en el DOM ------
+function renderDestinos() {
+  listaDestinos.innerHTML = "";
+
+  destinosTuristicos.forEach((destino) => {
+    const card = document.createElement("button");
+    card.classList.add("destinoCard");
+    card.innerText = `${destino.pais} - ${destino.ciudad}`;
+    card.addEventListener("click", () => {
+      destinoSeleccionado = destino;
+      localStorage.setItem("destino", JSON.stringify(destino));
+      marcarSeleccion(card);
+    });
+
+    listaDestinos.appendChild(card);
+  });
+}
+renderDestinos();
+
+// Estética – marcar seleccionado
+function marcarSeleccion(card) {
+  document.querySelectorAll(".destinoCard").forEach(btn => btn.classList.remove("seleccionado"));
+  card.classList.add("seleccionado");
 }
 
-// La funcion mostrarDestinos() se ocupa de iterar y mostrar por consola todos los elementos del array
-function mostrarDestinos() {
-  console.log("Lista de destino turisticos disponible");
-  for (let index = 0; index < destinosTuristicos.length; index++) {
-    const element = destinosTuristicos[index];
-    console.log(`${element.id}. ${element.pais} - ${element.ciudad}`);
+// ------ 3. Confirmar viaje ------
+btnConfirmarViaje.addEventListener("click", () => {
+  const dias = parseInt(inputDias.value);
+
+  if (!destinoSeleccionado) {
+    resumen.innerHTML = "<p>⚠️ Debes seleccionar un destino.</p>";
+    return;
   }
-}
 
-// La funcion de seleccionarDestino(nombrePasajero) contiene un parametro
-// EL parametro que pasamos lo obtenemos la funcion nombreDePasajero()
-// Para lograr eso asignamos el valor retornado a una constante que es la que pasamos como parametro
-function seleccionarDestino(nombrePasajero) {
-  alert(`${nombrePasajero} preparate para elegir un destino`);
-  let diasDeEstadia;
-  let idSeleccionado;
-  let destinoElegido = null
-
-  while (destinoElegido === null) {
-    idSeleccionado = prompt(
-      `${nombrePasajero}, selecciona el número de ID de tu destino:
-
-      1. Brasil - San Pablo
-      2. Estados Unidos - Miami
-      3. Mexico - Cancun
-      4. Italia - Toscana
-      5. España - Ibiza
-      6. Brasil - Maceio
-      `
-    );
-
-    if (idSeleccionado === null) {
-      alert("Operación cancelada. ¡Esperamos verte pronto!");
-      return; // Salimos de la función
-    }
-
-    destinoElegido = destinosTuristicos.find(
-      (destino) => destino.id === parseInt(idSeleccionado)
-    );
-
-    if (destinoElegido) {
-      diasDeEstadia = parseInt(prompt(`Cuantos dias te gustaria tomarte de vacaciones en ${destinoElegido.pais}? `))
-
-      alert(
-        `¡Excelente elección, ${nombrePasajero}! Tu vuelo es a ${destinoElegido.ciudad}, ${destinoElegido.pais} por ${diasDeEstadia} dias.`
-      );
-    } else {
-      alert(
-        "ID inválido. Por favor, ingresa uno de los números disponibles en la consola (1-6)."
-      );
-    }
+  if (!dias || dias < 1) {
+    resumen.innerHTML = "<p>⚠️ Ingresa una cantidad de días válida.</p>";
+    return;
   }
+
+  const resumenData = {
+    nombre: nombrePasajero,
+    destino: destinoSeleccionado,
+    dias: dias,
+  };
+
+  localStorage.setItem("resumenViaje", JSON.stringify(resumenData));
+
+  mostrarResumen(resumenData);
+});
+
+// ------ 4. Mostrar resumen ------
+function mostrarResumen(data) {
+  resumen.innerHTML = `
+    <p><strong>Pasajero:</strong> ${data.nombre}</p>
+    <p><strong>Destino:</strong> ${data.destino.ciudad}, ${data.destino.pais}</p>
+    <p><strong>Días:</strong> ${data.dias}</p>
+  `;
 }
-
-
-alert("Bienvenido a Flybondi, la libertad de volar.");
-const nombreDelPasajero = nombreDePasajero();
-mostrarDestinos();
-seleccionarDestino(nombreDelPasajero);

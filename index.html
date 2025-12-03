@@ -1,18 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Flybondi</title>
+  <!-- Estilos CSS -->
+  <link rel="stylesheet" href="./css/styles.css">
 </head>
+
 <body>
-  <h1>Simulador de Compras Flybondi</h1>
-  <p>
-    Este simulador permite al usuario seleccionar un destino turistico desde una lista,
-    elegir la cantidad de dias y visualizar un resumen con impuestos incluidos.
-    El programa fue desarrollado utilizando variables, arrays, funciones, condicionales y bucles en JavaScript.
-    Toda la interacción se realiza mediante cuadros de diálogo y la consola del navegador.
-  </p>
+  <h1>Flybondi - Simulador de Viajes</h1>
+
+  <!-- FORMULARIO DE NOMBRE -->
+  <section>
+    <h2>1. Ingresa tus datos</h2>
+    <input id="inputNombre" type="text" placeholder="Nombre y Apellido">
+    <button id="btnGuardarNombre">Guardar nombre</button>
+    <p id="saludo"></p>
+  </section>
+
+  <!-- LISTA DE DESTINOS -->
+  <section>
+    <h2>2. Selecciona tu destino</h2>
+    <div id="listaDestinos"></div>
+  </section>
+
+  <!-- SELECCIÓN DE DÍAS -->
+  <section>
+    <h2>3. Elige la cantidad de días</h2>
+    <input id="inputDias" type="number" min="1" placeholder="Cantidad de días">
+    <button id="btnConfirmarViaje">Confirmar viaje</button>
+  </section>
+
+  <!-- RESUMEN -->
+  <section>
+    <h2>Resumen de tu viaje</h2>
+    <div id="resumen"></div>
+  </section>
   <script src="./assets/js/index.js"></script>
 </body>
+
 </html>
